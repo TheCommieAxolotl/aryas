@@ -1,0 +1,51 @@
+{
+  "name": "aryas",
+  "version": "0.3.0",
+  "description": "Simple electron app updates",
+  "homepage": "https://github.com/TheCommieAxolotl/aryas#readme",
+  "bugs": {
+    "url": "https://github.com/TheCommieAxolotl/aryas/issues"
+  },
+  "license": "MIT",
+  "author": "TheCommieAxolotl",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheCommieAxolotl/aryas.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest",
+    "check": "vite check",
+    "prepublishOnly": "vite build"
+  },
+  "dependencies": {
+    "semver": "^7.8.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/semver": "^7.7.1",
+    "bumpp": "^11.1.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.10"
+  },
+  "peerDependencies": {
+    "@octokit/rest": "^22.0.1",
+    "@octokit/types": "^16.0.0",
+    "electron": ">=43.2.0"
+  },
+  "packageManager": "pnpm@11.18.0"
+}

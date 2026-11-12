@@ -1,0 +1,9 @@
+node_modules
+.turbo
+*.log
+.DS_Store
+
+# Never commit credentials. The CLI reads these from the environment.
+.env
+.env.*
+!.env.example

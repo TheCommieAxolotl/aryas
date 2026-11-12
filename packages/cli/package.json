@@ -1,0 +1,29 @@
+{
+    "name": "aryas-cli",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Publish release artifacts and .sha256 checksums to GitHub for aryas-powered apps",
+    "bin": {
+        "aryas-cli": "./dist/index.js"
+    },
+    "files": [
+        "dist"
+    ],
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite build --watch",
+        "check": "vite check"
+    },
+    "dependencies": {
+        "@octokit/rest": "^22.0.1",
+        "semver": "^7.8.5"
+    },
+    "devDependencies": {
+        "@types/node": "^26.1.1",
+        "@types/semver": "^7.7.1",
+        "typescript": "^7.0.2",
+        "vite": "^8.2.0"
+    },
+    "packageManager": "pnpm@11.18.0"
+}

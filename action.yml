@@ -1,0 +1,78 @@
+name: Publish aryas release
+description: Publish a zip artifact and its SHA-256 checksum to GitHub Releases so aryas-powered apps can update.
+author: TheCommieAxolotl
+branding:
+    icon: upload-cloud
+    color: purple
+
+inputs:
+    zip:
+        description: Path to the zip artifact to publish (must contain <AppName>.app at its root for macOS updates).
+        required: true
+    token:
+        description: 'GitHub token with `contents: write` on the target repository.'
+        required: true
+    version:
+        description: Semver version to publish. Defaults to the workflow's tag/ref name, with `tag-prefix` stripped.
+        required: false
+    tag-prefix:
+        description: Prefix prepended to the version when creating the tag (e.g. `v` or `pico-`).
+        required: false
+        default: ''
+    repo:
+        description: Repository to publish to, as `owner/repo`. Defaults to the repository running the workflow.
+        required: false
+    notes:
+        description: Release notes. Defaults to `Release <version>`.
+        required: false
+    draft:
+        description: Create the release as a draft. Leave empty to keep an existing release's state.
+        required: false
+    prerelease:
+        description: Mark the release as a pre-release. Leave empty to keep an existing release's state.
+        required: false
+
+outputs:
+    release-url:
+        description: HTML URL of the created or updated release.
+        value: ${{ steps.publish.outputs.url }}
+    tag:
+        description: Tag that was published.
+        value: ${{ steps.publish.outputs.tag }}
+
+runs:
+    using: composite
+    steps:
+        - id: publish
+          shell: bash
+          run: |
+              set -euo pipefail
+
+              output="$(node "$GITHUB_ACTION_PATH/packages/cli/dist/index.js" --no-input)"
+              printf '%s\n' "$output"
+
+              url="$(printf '%s\n' "$output" | sed -n 's/^Release: //p' | tail -n 1)"
+              tag="$(printf '%s\n' "$output" | sed -n 's/^Publishing \([^ ]*\) to .*/\1/p' | head -n 1)"
+
+              echo "url=$url" >> "$GITHUB_OUTPUT"
+              echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+              {
+                  echo "### Published ${tag:-release}"
+                  echo ""
+                  echo "| | |"
+                  echo "| --- | --- |"
+                  echo "| Repository | \`${GITHUB_REPO}\` |"
+                  echo "| Artifact | \`$(basename "$ARYAS_ZIP")\` |"
+                  echo "| Release | ${url:-n/a} |"
+              } >> "$GITHUB_STEP_SUMMARY"
+          env:
+              GITHUB_TOKEN: ${{ inputs.token }}
+              GITHUB_REPO: ${{ inputs.repo || github.repository }}
+              ARYAS_VERSION: ${{ inputs.version }}
+              ARYAS_TAG_PREFIX: ${{ inputs['tag-prefix'] }}
+              ARYAS_ZIP: ${{ inputs.zip }}
+              ARYAS_NOTES: ${{ inputs.notes }}
+              ARYAS_DRAFT: ${{ inputs.draft }}
+              ARYAS_PRERELEASE: ${{ inputs.prerelease }}
+              CI: 'true'

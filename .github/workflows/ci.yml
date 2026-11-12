@@ -1,0 +1,25 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+jobs:
+    build:
+        name: Lint / Build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: 24
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm lint
+            - run: pnpm --filter aryas-cli build
+            - name: Check the action bundle is up to date
+              run: git diff --exit-code -- packages/cli/dist
+            - name: Smoke test the CLI
+              run: node packages/cli/dist/index.js --help
